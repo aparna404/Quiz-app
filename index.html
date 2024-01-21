@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #quiz-container {
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .question {
+      padding: 20px;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    #options-container button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #options-container button:hover {
+      background-color: #45a049;
+    }
+
+    button {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 20px 0;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #result {
+      font-weight: bold;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    #timer {
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px;
+      font-size: 1em;
+    }
+  </style>
+  <title>Quiz App</title>
+</head>
+<body>
+  <div id="quiz-container">
+    <div id="question-container" class="question"></div>
+    <div id="options-container" class="question"></div>
+    <button onclick="nextQuestion()">Next</button>
+    <div id="result"></div>
+    <div id="timer"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is the capital of France?",
+        options: ["Paris", "Berlin", "Madrid", "Rome"],
+        correctAnswer: "Paris"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        correctAnswer: "Mars"
+      },
+      {
+        question: "What is the largest mammal in the world?",
+        options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+        correctAnswer: "Blue Whale"
+      }
+      // Add more questions as needed
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+
+    function startQuiz() {
+      shuffleQuestions();
+      displayQuestion();
+      startTimer();
+    }
+
+    function shuffleQuestions() {
+      quizData.sort(() => Math.random() - 0.5);
+    }
+
+    function displayQuestion() {
+      const currentQuestion = quizData[currentQuestionIndex];
+      document.getElementById("question-container").innerText = currentQuestion.question;
+
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = "";
+
+      currentQuestion.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.innerText = option;
+        button.addEventListener("click", () => checkAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedOption) {
+      const currentQuestion = quizData[currentQuestionIndex];
+
+      if (selectedOption === currentQuestion.correctAnswer) {
+        score++;
+      }
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < quizData.length) {
+        displayQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      clearInterval(timer);
+      document.getElementById("result").innerText = `Your score: ${score} / ${quizData.length}`;
+      document.getElementById("timer").innerText = "Quiz completed!";
+    }
+
+    function startTimer() {
+      let timeLimit = 60; // seconds
+      timer = setInterval(() => {
+        document.getElementById("timer").innerText = `Time left: ${timeLimit}s`;
+        timeLimit--;
+
+        if (timeLimit < 0) {
+          endQuiz();
+        }
+      }, 1000);
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < quizData.length) {
+        displayQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    window.onload = startQuiz;
+  </script>
+</body>
+</html>
